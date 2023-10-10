@@ -165,7 +165,7 @@ class Flipchem():
                                            self.f107,te,ti,Tn,O,O2,N2,He,H,N,ne,
                                            user_no=user_no,user_oplus=user_oplus)
 
-            lthrs,szad,dec,OXPLUS,O2PLUS,NOPLUS,N2PLUS,NPLUS,NNO,N2D,ITERS = flip_outputs
+            lthrs,szad,dec,OXPLUS,O2PLUS,NOPLUS,N2PLUS,NPLUS,NNO,N2D,PHOTOPRD,ITERS = flip_outputs
 
             # scale into SI units (m^-3)
             OXPLUS = OXPLUS * 1.0e6
@@ -173,6 +173,7 @@ class Flipchem():
             NOPLUS = NOPLUS * 1.0e6
             N2PLUS = N2PLUS * 1.0e6
             NPLUS = NPLUS * 1.0e6
+            PHOTOPRD = PHOTOPRD * 1.0e6
 
         # return fractions if requested
         if fractions:
@@ -182,7 +183,7 @@ class Flipchem():
             N2PLUS = N2PLUS / ne
             NPLUS = NPLUS / ne
 
-        return lthrs,szad,dec,OXPLUS,O2PLUS,NOPLUS,N2PLUS,NPLUS,NNO,N2D,ITERS
+        return lthrs,szad,dec,OXPLUS,O2PLUS,NOPLUS,N2PLUS,NPLUS,NNO,N2D,PHOTOPRD,ITERS
 
     def _call_flip(self,date,lat,lon,alt,ap,f107a,f107,te,ti,tn,OXN,O2N,N2N,HEN,HN,N4S,NE,user_no=-1.0,user_oplus=-1.0):
         """Hidden method used to call chemion the fortran subroutine.
@@ -208,9 +209,9 @@ class Flipchem():
         # be halved if it comes from NRLMSIS-00.
         # all density units need to be in cm^-3
         outputs = _chemion(jprint,alt,f107,f107a,te,ti,tn,OXN,O2N,N2N,HEN,HN,user_no,0.5*N4S,NE*1.0e-6,user_oplus,szad)
-        OXPLUS,O2PLUS,NOPLUS,N2PLUS,NPLUS,NNO,N2D,iters = outputs
+        OXPLUS,O2PLUS,NOPLUS,N2PLUS,NPLUS,NNO,N2D,PHOTOPRD,iters = outputs
             
-        return lthrs,szad,decd,OXPLUS,O2PLUS,NOPLUS,N2PLUS,NPLUS,NNO,N2D,iters
+        return lthrs,szad,decd,OXPLUS,O2PLUS,NOPLUS,N2PLUS,NPLUS,NNO,N2D,PHOTOPRD,iters
 
     def _call_getltsza(self,date,lat,lon):
         """ Hidden method used to call the getltsza fortran subroutine.

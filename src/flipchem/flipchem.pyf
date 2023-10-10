@@ -3,7 +3,7 @@
 
 python module _f_flipchem ! in 
     interface  ! in :_f_flipchem
-        subroutine chemion(jprint,alt,f107,f107a,te,ti,tn,oxn,o2n,n2n,hen,hn,user_no,n4s,ne,user_oplus,szad,oxplus,o2plus,noplus,n2plus,nplus,nno,n2d,iters) ! in :_f_flipchem:flipchem.f
+        subroutine chemion(jprint,alt,f107,f107a,te,ti,tn,oxn,o2n,n2n,hen,hn,user_no,n4s,ne,user_oplus,szad,oxplus,o2plus,noplus,n2plus,nplus,nno,n2d,photoprd,iters) ! in :_f_flipchem:flipchem.f
             integer :: jprint
             real :: alt
             real :: f107
@@ -28,6 +28,7 @@ python module _f_flipchem ! in
             real intent(out) :: nplus
             real intent(out) :: nno
             real intent(out) :: n2d
+            real intent(out) :: photoprd
             integer intent(out) :: iters
             real dimension(3,12) :: euvion
             real dimension(3,12) :: pexcit

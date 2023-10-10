@@ -12,6 +12,7 @@ C 2012.01 01/04/12 Deleted BRACE,ACTUAL_DAY,EPHEM SOLDEC,TFILE,RUN_ERROR (not us
 C 2012.01 01/04/12 COP2D: 99 FOMRAT ',' missing; commented out all WRITEs
 C 2014.01 07/17/14 COP4S: NPLUS=0; PR(13)=0.0 ------------------------- A Shabanloui
 C 2020.01 11/02/20 A. Reimer added GETLTSZA back in, added comments for f2py
+C 2023.10 10/09/23 I. Virtanen added the PHOTOPRD output
 C****************************************************************************************
 C subroutines for IDC model
 C
@@ -70,6 +71,7 @@ C..... The EUVAC model is used for solar EUV irradiances
       !.. OUTPUT: O+, O2+, NO+ densities (cm-3)
       !.. OUTPUT: N2+ and N+ densities (cm-3)
       !.. OUTPUT: NO and N(2D) density (cm-3)
+      !.. OUTPUT: total production rate by photoionization (cm-3s-1)
       !.. OUTPUT: # of iterations to converge
 
       SUBROUTINE CHEMION(JPRINT,
@@ -85,6 +87,7 @@ C..... The EUVAC model is used for solar EUV irradiances
      >     OXPLUS,O2PLUS,NOPLUS,
      >             N2PLUS,NPLUS,
      >                  NNO,N2D,
+     >                 PHOTOPRD,
      >                    ITERS)
       IMPLICIT NONE
       !.. Turns on printing of production and loss
@@ -137,6 +140,8 @@ C..... The EUVAC model is used for solar EUV irradiances
       REAL EUVION,PEXCIT,PEPION,OTHPR1,OTHPR2,PRHEP
       !.. saved sum of ions for convergence
       REAL SUMSAVE
+      !.. total ion production rate by photoionization, IV 20231009
+      REAL PHOTOPRD
       COMMON/EUVPRD/EUVION(3,12),PEXCIT(3,12),PEPION(3,12),OTHPR1(6)
      >   ,OTHPR2(6)
 
@@ -147,6 +152,7 @@ Cf2py intent(out) N2PLUS
 Cf2py intent(out) NPLUS
 Cf2py intent(out) NNO
 Cf2py intent(out) N2D
+Cf2py intent(out) PHOTOPRD
 Cf2py intent(out) ITERS
 
       !.. initialize parameters
@@ -169,6 +175,15 @@ Cf2py intent(out) ITERS
       CALL SECIPRD(ALT,SZAD,F107,F107A,TE,TN,OXN,O2N,N2N,
      >   NE,N2APRD)
 
+      !.. total production rate by photoionization, IV 20231009
+      PHOTOPRD=0.
+      DO I=1,3
+         DO J=1,6
+            PHOTOPRD = PHOTOPRD + EUVION(I,J) + PEPION(I,J)
+         ENDDO
+      ENDDO
+
+      
       !.. EUV dissociation rate of N2
       UVDISN=OTHPR1(1)
       DISNP= EUVION(3,4)+EUVION(3,5)+EUVION(3,6)
@@ -292,6 +307,7 @@ Cf2py intent(out) ITERS
         ENDIF
         SUMSAVE=SUMIONS  
       ENDDO
+
 
       RETURN
       END
