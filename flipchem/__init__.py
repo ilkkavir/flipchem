@@ -2,7 +2,7 @@
 from __future__ import absolute_import
 
 from . import ext
-from .geophys import read_geophys, update_geophys
+from .geophys import read_geophys, update_geophys, update_geophys_gfz
 from .msis import MSIS
 from .msis import compute_ion_neutral_collfreq, compute_electron_neutral_collfreq
 from .msis import compute_electron_neutral_collfreq

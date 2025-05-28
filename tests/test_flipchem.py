@@ -12,7 +12,7 @@ def test_Flipchem():
 
     expected = (19.588119506835938,118.02107897069808,-22.65814170352014,
                 425978468750.0,52250906250.0,18525945312.5,2840931884.765625,
-                403744110.1074219,1110899.625,39.76298141479492,2)
+                403744110.1074219,1110899.625,39.76298141479492,98186.71643733978,2)
 
     date = datetime(2017,1,4,2)
     fc = Flipchem(date)
@@ -34,7 +34,7 @@ def test_Flipchem_fractions():
 
     expected = (3.273433208465576,124.95449961982641,-22.97288535821079,
                 0.926086125,0.0482425859375,0.02090298046875,0.0038885703125,
-                0.000879680419921875,673794.6875,40.84779357910156,2)
+                0.000879680419921875,673794.6875,40.84779357910156,67122.4594116211,2)
 
     date = datetime(2018,1,1,2)
     fc = Flipchem(date)
@@ -45,6 +45,7 @@ def test_Flipchem_fractions():
     ne = 5.0e11
     te = ti = 500
     outputs = fc.get_point(glat,glon,alt,ne,te,ti,fractions=True)
+    print(outputs)
     for i in range(len(expected)):
         if isinstance(expected[i],bool):
             assert(expected[i] == outputs[i])

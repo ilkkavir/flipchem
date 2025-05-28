@@ -254,3 +254,85 @@ def update_geophys(year=None,base_url='https://amisr.com/geophys_params/'):
 
 
 
+# update geophysical parameter files using files from Helmholtz Centre for Geosciences
+# IV 2025
+def update_geophys_gfz(year=None):
+    """This function downloads geophysical parameter files from the Helmholtz Centre for Geosciences, https://gfz.de.
+
+    Parameters
+    ==========
+    year : int, optional
+        The year for which to download a geophysical parameter file. If
+        year is None, all files are downloaded.
+
+    Notes
+    =====
+
+    The files are updated on a daily basis, so it is important to update
+    the local copy of these files on a regular basis.
+
+    Examples
+    ========
+    ::
+
+        import flipchem
+        flipchem.update_geophys(2020)
+
+    """
+
+    # current year
+    cur_year = datetime.now().year
+
+    if year is None:
+        years = [cur_year]
+    elif year == 'all':
+        years = range(1947,cur_year+1)
+    else:
+        years = [year]
+
+    # iterate through the years we need to download
+    print("Updating geophysical parameters files:")
+    for yr in years:
+        print("   ...doing %s" % str(yr))
+        # download the data for the year
+        content = _download_year_gfz(yr)
+        # write it to file
+        save_path = os.path.join(GEOPHYSDIR,str(yr))
+        with open(save_path,'w') as f:
+            f.write(content)
+    print("Done!")
+
+
+
+
+
+# helper function for downloading data for a specific year
+def _download_year_gfz(year):
+
+    url1 = 'https://kp.gfz.de/kpdata?startdate='+str(year)+'-01-01&enddate='+str(year)+'-12-31&format=wdc&wdc=def#kpdatadownload-143'
+    url2 = 'https://kp.gfz.de/kpdata?startdate='+str(year)+'-01-01&enddate='+str(year)+'-12-31&format=kp1'
+    try:
+        resp1 = urlopen(url1)
+        content1 = resp1.read()
+        resp2 = urlopen(url2)
+        content2 = resp2.read()
+    except Exception as e:
+        text = 'Problem encountered trying to download geophysical'
+        text += 'parameters from %s\n%s\nException details:\n%s' % (url1,url2,str(e))
+        raise Exception(text)
+
+    cont1 = content1.decode('utf-8')
+    cont2 = content2.decode('utf-8')
+
+    lines1 = cont1.splitlines()
+    lines2 = cont2.splitlines()
+
+    nn1 = len(lines1)
+    nn2 = len(lines2)
+    nn = min(nn1,nn2)
+
+    newlines = ''
+    for ll in range(nn):
+        newlines+=lines1[ll]+'---'+lines2[ll][151:156]+'0\n'
+    
+    return newlines
